@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import {Component} from 'react'
 import './App.css';
 import CardList from './components/card-list/CardList'
+import {SearchBox} from './components/searchbox/SearchBox'
 
 class App extends Component {
   constructor(){
@@ -26,6 +27,7 @@ class App extends Component {
     }
 
   }
+
   componentDidMount(){
     fetch('https://jsonplaceholder.typicode.com/users')
     .then((res)=> res.json()).then((users)=>this.setState({monsters:users}))
@@ -33,19 +35,29 @@ class App extends Component {
     console.log(res)
   })
   }
+
+  handleChange = (e)=>{
+    console.log(this)
+    this.setState({ searchField:e.target.value})
+  }
+
+
+
+
   render(){
+    const {monsters,searchField} = this.state ;
+    const filteredMonsters = monsters.filter((monster)=>
+      monster.name.toLowerCase().includes(searchField.toLowerCase())
+    )
     console.log(this.state)
     return (
       <div className="App">
-      <input type ='text' placeholder = 'Search monsters' onChange = {
-        e =>{
-        this.setState({ searchField:e.target.value},()=>{
-          console.log(this.state)
-        })
-        }
+      <SearchBox handleChange = {this.handleChange}
+      //when setState is called it rerenders the component and calls the render method again
+      placeholder = {'search for monsters'}
+      />
 
-      }/>
-      <CardList monsters = {this.state.monsters}/>
+      <CardList monsters = {filteredMonsters}/>
       </div>
     )
 
